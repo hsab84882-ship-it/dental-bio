@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دنتال كير | متجر المستلزمات الطبية والأسنان</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .whatsapp-float {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Top Bar -->
+    <div class="bg-medical-900 text-white text-xs py-2 px-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <span><i class="fa-solid fa-phone text-medical-500 me-1"></i> الدعم الفني: 01140188714</span>
+                <a href="https://wa.me/201140188714" target="_blank" class="hover:text-green-400 transition">
+                    <i class="fa-brands fa-whatsapp text-green-400 me-1"></i> واتساب مباشر
+                </a>
+            </div>
+            <div id="userStatusNav" class="flex items-center space-x-3 space-x-reverse">
+                <button onclick="openAuthModal('login')" class="hover:underline"><i class="fa-solid fa-right-to-bracket me-1"></i> تسجيل الدخول</button>
+                <span>|</span>
+                <button onclick="openAuthModal('register')" class="hover:underline"><i class="fa-solid fa-user-plus me-1"></i> إنشاء حساب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="switchTab('store')">
+                <div class="w-10 h-10 bg-medical-600 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow">
+                    <i class="fa-solid fa-tooth"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900 leading-none">دنتال كير</h1>
+                    <span class="text-xs text-medical-600 font-semibold">DentalCare Supplies</span>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="hidden md:flex flex-1 max-w-md mx-8">
+                <div class="relative w-full">
+                    <input type="text" id="searchInput" oninput="filterProducts()" placeholder="ابحث عن أجهزة، حشوات، أدوات..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-medical-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <button id="adminTabBtn" onclick="switchTab('admin')" class="hidden bg-purple-100 text-purple-700 px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-purple-200 transition">
+                    <i class="fa-solid fa-chart-line me-1"></i> لوحة التحكم
+                </button>
+                <button onclick="toggleCart()" class="relative bg-medical-50 text-medical-700 p-2.5 rounded-lg hover:bg-medical-100 transition">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
+        
+        <!-- Store View -->
+        <div id="storeView">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-medical-800 to-medical-600 rounded-2xl p-8 text-white mb-8 relative overflow-hidden shadow-lg">
+                <div class="relative z-10 max-w-lg">
+                    <span class="bg-medical-500/30 text-white text-xs px-3 py-1 rounded-full uppercase font-bold tracking-wider mb-2 inline-block">عروض حصرية 2026</span>
+                    <h2 class="text-3xl font-extrabold mb-2">أحدث مستلزمات عيادات الأسنان بأعلى جودة</h2>
+                    <p class="text-medical-100 text-sm mb-6">احصل على خصومات تصل إلى 20% على أجهزة الفحص ومواد الحشو المعتمدة.</p>
+                    <a href="#productsSection" class="bg-white text-medical-800 font-bold px-5 py-2.5 rounded-lg text-sm hover:bg-medical-50 transition inline-block">تصفح المنتجات</a>
+                </div>
+            </div>
+
+            <!-- Categories Filter -->
+            <div class="flex items-center space-x-2 space-x-reverse overflow-x-auto pb-4 mb-6" id="categoryFilters">
+                <button onclick="setCategory('all')" class="cat-btn active bg-medical-600 text-white px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap">الكل</button>
+                <button onclick="setCategory('ortho')" class="cat-btn bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 whitespace-nowrap">أدوات التقويم</button>
+                <button onclick="setCategory('devices')" class="cat-btn bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 whitespace-nowrap">أجهزة الفحص</button>
+                <button onclick="setCategory('fillings')" class="cat-btn bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 whitespace-nowrap">الحشوات والمواد</button>
+                <button onclick="setCategory('sterilization')" class="cat-btn bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 whitespace-nowrap">أدوات التعقيم</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsSection" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Products will be injected by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="adminView" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">لوحة تحكم الإدارة</h2>
+                        <p class="text-sm text-gray-500">إدارة المبيعات، المنتجات والطلبات</p>
+                    </div>
+                    <button onclick="switchTab('store')" class="text-sm text-medical-600 hover:underline font-semibold">
+                        <i class="fa-solid fa-store me-1"></i> العودة للمتجر
+                    </button>
+                </div>
+
+                <!-- Admin Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-medical-50 p-4 rounded-xl border border-medical-100">
+                        <span class="text-xs text-medical-600 font-bold uppercase">إجمالي المبيعات</span>
+                        <div class="text-2xl font-extrabold text-medical-900 mt-1" id="adminTotalRevenue">0 ج.م</div>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <span class="text-xs text-blue-600 font-bold uppercase">عدد الطلبات</span>
+                        <div class="text-2xl font-extrabold text-blue-900 mt-1" id="adminOrdersCount">0</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                        <span class="text-xs text-purple-600 font-bold uppercase">المنتجات النشطة</span>
+                        <div class="text-2xl font-extrabold text-purple-900 mt-1" id="adminProductsCount">0</div>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                        <span class="text-xs text-amber-600 font-bold uppercase">المستخدمين المسجلين</span>
+                        <div class="text-2xl font-extrabold text-amber-900 mt-1" id="adminUsersCount">0</div>
+                    </div>
+                </div>
+
+                <!-- Add Product Form -->
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-8">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4"><i class="fa-solid fa-plus-circle me-1 text-medical-600"></i> إضافة منتج جديد</h3>
+                    <form id="addProductForm" onsubmit="handleAddProduct(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="newProdName" placeholder="اسم المنتج" required class="p-2.5 border rounded-lg text-sm bg-white">
+                        <input type="number" id="newProdPrice" placeholder="السعر (ج.م)" required class="p-2.5 border rounded-lg text-sm bg-white">
+                        <select id="newProdCategory" required class="p-2.5 border rounded-lg text-sm bg-white">
+                            <option value="ortho">أدوات التقويم</option>
+                            <option value="devices">أجهزة الفحص</option>
+                            <option value="fillings">الحشوات والمواد</option>
+                            <option value="sterilization">أدوات التعقيم</option>
+                        </select>
+                        <input type="text" id="newProdImg" placeholder="رابط صورة المنتج (URL)" required class="md:col-span-2 p-2.5 border rounded-lg text-sm bg-white">
+                        <button type="submit" class="bg-medical-600 text-white font-bold py-2.5 rounded-lg text-sm hover:bg-medical-700 transition">إضافة المنتج</button>
+                    </form>
+                </div>
+
+                <!-- Recent Orders Table -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4"><i class="fa-solid fa-list-check me-1 text-medical-600"></i> سجل الطلبات الحديثة</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-right text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-3">رقم الطلب</th>
+                                    <th class="px-4 py-3">اسم العميل</th>
+                                    <th class="px-4 py-3">الهاتف</th>
+                                    <th class="px-4 py-3">الإجمالي</th>
+                                    <th class="px-4 py-3">الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminOrdersTable">
+                                <!-- Order rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/201140188714" target="_blank" class="whatsapp-float bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl hover:bg-green-600 transition">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 mt-auto text-sm">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-2">دنتال كير</h3>
+                    <p class="text-gray-400 text-xs">منصتكم الموثوقة لتأمين جميع المستلزمات الطبية وأجهزة طب الأسنان بأعلى معايير الجودة.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-2">تواصل معنا</h4>
+                    <p class="text-xs text-gray-400 mb-1"><i class="fa-solid fa-phone me-1"></i> 01140188714</p>
+                    <p class="text-xs text-gray-400"><i class="fa-brands fa-whatsapp me-1 text-green-400"></i> واتساب: 01140188714</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-2">ساعات العمل</h4>
+                    <p class="text-xs text-gray-400">من السبت إلى الخميس: 9:00 صباحاً - 9:00 مساءً</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-4 text-center text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-center">
+                <span>&copy; 2026 جميع الحقوق محفوظة لمتجر دنتال كير.</span>
+                <span class="mt-2 sm:mt-0 font-bold text-medical-500">تم التطوير بواسطة: ENG/Ahmed ABO</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Drawer -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleCart()"></div>
+        <div class="absolute inset-y-0 left-0 max-w-full flex">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                <div class="p-4 bg-medical-700 text-white flex justify-between items-center">
+                    <h3 class="font-bold text-lg"><i class="fa-solid fa-cart-shopping me-2"></i> سلة التسوق</h3>
+                    <button onclick="toggleCart()" class="text-white hover:text-gray-200"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <!-- Cart items injected here -->
+                </div>
+                <div class="p-4 border-t bg-gray-50">
+                    <div class="flex justify-between items-center mb-2 font-bold text-gray-800">
+                        <span>الإجمالي:</span>
+                        <span id="cartTotal">0 ج.م</span>
+                    </div>
+                    <button onclick="checkout()" class="w-full bg-medical-600 text-white font-bold py-3 rounded-lg hover:bg-medical-700 transition">تأكيد الطلب</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 id="authTitle" class="text-xl font-bold text-gray-900 mb-4 text-center">تسجيل الدخول</h3>
+            <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">اسم المستخدم</label>
+                    <input type="text" id="authUsername" required class="w-full p-2.5 border rounded-lg text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">كلمة المرور</label>
+                    <input type="password" id="authPassword" required class="w-full p-2.5 border rounded-lg text-sm">
+                </div>
+                <div id="roleSelectContainer" class="hidden">
+                    <label class="block text-xs font-bold text-gray-700 mb-1">نوع الحساب</label>
+                    <select id="authRole" class="w-full p-2.5 border rounded-lg text-sm">
+                        <option value="customer">طبيب / عميل</option>
+                        <option value="admin">مدير النظام (Admin)</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-medical-600 text-white font-bold py-2.5 rounded-lg text-sm hover:bg-medical-700 transition">متابعة</button>
+            </form>
+            <div class="mt-4 text-center text-xs text-gray-500">
+                <span id="authToggleText">ليس لديك حساب؟</span>
+                <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-medical-600 font-bold hover:underline me-1">إنشاء حساب جديد</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Initial Mock Data
+        let products = JSON.parse(localStorage.getItem('dental_products')) || [
+            { id: 1, name: "جهاز فحص أسنان LED ناصع", price: 3500, category: "devices", img: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=300" },
+            { id: 2, name: "طقم حشوات كومبوزيت متكامل", price: 1200, category: "fillings", img: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=300" },
+            { id: 3, name: "أدوات تقويم أسنان معدنية (Pack)", price: 850, category: "ortho", img: "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=300" },
+            { id: 4, name: "جهاز تعقيم أوتوكلاف 18 لتر", price: 18500, category: "sterilization", img: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=300" }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('dental_cart')) || [];
+        let orders = JSON.parse(localStorage.getItem('dental_orders')) || [];
+        let users = JSON.parse(localStorage.getItem('dental_users')) || [
+            { username: "admin", role: "admin" }
+        ];
+
+        let currentUser = JSON.parse(localStorage.getItem('dental_current_user')) || null;
+        let currentCategory = 'all';
+        let authMode = 'login';
+
+        // Save State
+        function saveData() {
+            localStorage.setItem('dental_products', JSON.stringify(products));
+            localStorage.setItem('dental_cart', JSON.stringify(cart));
+            localStorage.setItem('dental_orders', JSON.stringify(orders));
+            localStorage.setItem('dental_users', JSON.stringify(users));
+            localStorage.setItem('dental_current_user', JSON.stringify(currentUser));
+        }
+
+        // Initialize App
+        function init() {
+            renderProducts();
+            updateCartUI();
+            updateUserNav();
+            renderAdminData();
+        }
+
+        // Render Products Grid
+        function renderProducts() {
+            const container = document.getElementById('productsSection');
+            const filtered = products.filter(p => {
+                const matchesCat = currentCategory === 'all' || p.category === currentCategory;
+                const searchVal = document.getElementById('searchInput').value.toLowerCase();
+                const matchesSearch = p.name.toLowerCase().includes(searchVal);
+                return matchesCat && matchesSearch;
+            });
+
+            container.innerHTML = filtered.map(p => `
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+                    <img src="${p.img}" alt="${p.name}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 text-sm mb-2">${p.name}</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-medical-700 font-extrabold">${p.price.toLocaleString()} ج.م</span>
+                            <button onclick="addToCart(${p.id})" class="bg-medical-50 text-medical-700 p-2 rounded-lg hover:bg-medical-600 hover:text-white transition">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Category Filter
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-medical-600', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-700');
+            });
+            event.target.classList.add('bg-medical-600', 'text-white');
+            renderProducts();
+        }
+
+        function filterProducts() {
+            renderProducts();
+        }
+
+        // Cart Actions
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            saveData();
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cartBadge').innerText = cart.reduce((acc, i) => acc + i.qty, 0);
+            const container = document.getElementById('cartItems');
+            container.innerHTML = cart.map(i => `
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div>
+                        <h4 class="font-bold text-xs text-gray-800">${i.name}</h4>
+                        <span class="text-xs text-medical-600 font-bold">${(i.price * i.qty).toLocaleString()} ج.م</span>
+                    </div>
+                    <div class="flex items-center space-x-2 space-x-reverse">
+                        <button onclick="changeQty(${i.id}, -1)" class="px-2 py-1 bg-gray-100 rounded">-</button>
+                        <span class="text-xs font-bold">${i.qty}</span>
+                        <button onclick="changeQty(${i.id}, 1)" class="px-2 py-1 bg-gray-100 rounded">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+            document.getElementById('cartTotal').innerText = total.toLocaleString() + ' ج.م';
+        }
+
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+            }
+            saveData();
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            document.getElementById('cartDrawer').classList.toggle('hidden');
+        }
+
+        function checkout() {
+            if (cart.length === 0) return alert('السلة فارغة!');
+            const order = {
+                id: Date.now(),
+                customer: currentUser ? currentUser.username : "طبيب زائر",
+                total: cart.reduce((acc, i) => acc + (i.price * i.qty), 0),
+                status: "قيد الانتظار"
+            };
+            orders.push(order);
+            cart = [];
+            saveData();
+            updateCartUI();
+            toggleCart();
+            alert('تم تسجيل طلبك بنجاح! سيتواصل معك الدعم الفني قريباً.');
+            renderAdminData();
+        }
+
+        // Authentication Logic
+        function openAuthModal(mode) {
+            authMode = mode;
+            document.getElementById('authModal').classList.remove('hidden');
+            document.getElementById('authTitle').innerText = mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
+            document.getElementById('roleSelectContainer').classList.toggle('hidden', mode === 'login');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            openAuthModal(authMode === 'login' ? 'register' : 'login');
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            const username = document.getElementById('authUsername').value;
+            const role = document.getElementById('authRole').value;
+
+            if (authMode === 'register') {
+                users.push({ username, role });
+                currentUser = { username, role };
+            } else {
+                const user = users.find(u => u.username === username);
+                if (user) {
+                    currentUser = user;
+                } else {
+                    currentUser = { username, role: 'customer' };
+                }
+            }
+            saveData();
+            updateUserNav();
+            closeAuthModal();
+        }
+
+        function updateUserNav() {
+            const container = document.getElementById('userStatusNav');
+            const adminBtn = document.getElementById('adminTabBtn');
+            if (currentUser) {
+                container.innerHTML = `
+                    <span>مرحباً، <strong>${currentUser.username}</strong></span>
+                    <button onclick="logout()" class="text-red-300 hover:underline me-2">خروج</button>
+                `;
+                adminBtn.classList.toggle('hidden', currentUser.role !== 'admin');
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal('login')" class="hover:underline"><i class="fa-solid fa-right-to-bracket me-1"></i> تسجيل الدخول</button>
+                    <span>|</span>
+                    <button onclick="openAuthModal('register')" class="hover:underline"><i class="fa-solid fa-user-plus me-1"></i> إنشاء حساب</button>
+                `;
+                adminBtn.classList.add('hidden');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            saveData();
+            updateUserNav();
+            switchTab('store');
+        }
+
+        // Navigation Switcher
+        function switchTab(tab) {
+            document.getElementById('storeView').classList.toggle('hidden', tab !== 'store');
+            document.getElementById('adminView').classList.toggle('hidden', tab !== 'admin');
+        }
+
+        // Admin Functionality
+        function renderAdminData() {
+            document.getElementById('adminTotalRevenue').innerText = orders.reduce((acc, o) => acc + o.total, 0).toLocaleString() + ' ج.م';
+            document.getElementById('adminOrdersCount').innerText = orders.length;
+            document.getElementById('adminProductsCount').innerText = products.length;
+            document.getElementById('adminUsersCount').innerText = users.length;
+
+            const table = document.getElementById('adminOrdersTable');
+            table.innerHTML = orders.map(o => `
+                <tr class="bg-white border-b">
+                    <td class="px-4 py-3 font-bold">#${o.id}</td>
+                    <td class="px-4 py-3">${o.customer}</td>
+                    <td class="px-4 py-3">01140188714</td>
+                    <td class="px-4 py-3 text-medical-700 font-bold">${o.total.toLocaleString()} ج.م</td>
+                    <td class="px-4 py-3"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded">${o.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function handleAddProduct(e) {
+            e.preventDefault();
+            const newProd = {
+                id: Date.now(),
+                name: document.getElementById('newProdName').value,
+                price: parseFloat(document.getElementById('newProdPrice').value),
+                category: document.getElementById('newProdCategory').value,
+                img: document.getElementById('newProdImg').value || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=300"
+            };
+            products.push(newProd);
+            saveData();
+            renderProducts();
+            renderAdminData();
+            e.target.reset();
+            alert('تمت إضافة المنتج بنجاح!');
+        }
+
+        // Kickstart
+        init();
+    </script>
+</body>
+</html>
